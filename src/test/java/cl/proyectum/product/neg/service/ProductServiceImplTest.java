@@ -54,23 +54,19 @@ class ProductServiceImplTest {
         @DisplayName("debe guardar con id en null y retornar el persistido")
         void create_ok() {
             Product toCreate = new Product();
-            toCreate.setId(999L); // el service debe forzar a null
+            toCreate.setId(999L);
             toCreate.setNameProduct("Mouse Gamer");
             toCreate.setPriceProduct(new BigDecimal("19990"));
             toCreate.setStockProduct(10);
             toCreate.setDescriptionProduct("RGB");
-
             Product saved = new Product();
             saved.setId(7L);
             saved.setNameProduct(toCreate.getNameProduct());
             saved.setPriceProduct(toCreate.getPriceProduct());
             saved.setStockProduct(toCreate.getStockProduct());
             saved.setDescriptionProduct(toCreate.getDescriptionProduct());
-
             given(repo.save(any(Product.class))).willReturn(saved);
-
             Product result = service.create(toCreate);
-
             then(repo).should().save(productCaptor.capture());
             Product passed = productCaptor.getValue();
             assertThat(passed.getId()).as("id debe ir en null al guardar").isNull();
@@ -115,15 +111,10 @@ class ProductServiceImplTest {
         void list_noFilter() {
             Pageable pageable = PageRequest.of(0, 10, Sort.by("nameProduct"));
             Page<Product> page = new PageImpl<>(List.of(sample), pageable, 1);
-
-            // q = null
             given(repo.findAll(pageable)).willReturn(page);
-
             Page<Product> resultNull = service.list(null, pageable);
             assertThat(resultNull.getTotalElements()).isEqualTo(1);
             then(repo).should().findAll(pageable);
-
-            // q = blank
             reset(repo);
             given(repo.findAll(pageable)).willReturn(page);
             Page<Product> resultBlank = service.list("   ", pageable);
@@ -136,11 +127,8 @@ class ProductServiceImplTest {
         void list_withFilter() {
             Pageable pageable = PageRequest.of(0, 5);
             Page<Product> page = new PageImpl<>(List.of(sample), pageable, 1);
-
             given(repo.findByNameContainingIgnoreCase("meca", pageable)).willReturn(page);
-
             Page<Product> result = service.list("  meca  ", pageable);
-
             assertThat(result.getContent()).hasSize(1);
             then(repo).should().findByNameContainingIgnoreCase("meca", pageable);
         }
@@ -157,20 +145,15 @@ class ProductServiceImplTest {
             incoming.setPriceProduct(new BigDecimal("45990"));
             incoming.setStockProduct(30);
             incoming.setDescriptionProduct("Compacto");
-
             given(repo.findById(1L)).willReturn(Optional.of(sample));
-            // simular que repo.save devuelve el objeto actualizado
             willAnswer(invocation -> invocation.getArgument(0))
                     .given(repo).save(any(Product.class));
-
             Product result = service.update(1L, incoming);
-
             assertThat(result.getId()).isEqualTo(1L);
             assertThat(result.getNameProduct()).isEqualTo("Teclado 60%");
             assertThat(result.getPriceProduct()).isEqualByComparingTo("45990");
             assertThat(result.getStockProduct()).isEqualTo(30);
             assertThat(result.getDescriptionProduct()).isEqualTo("Compacto");
-
             then(repo).should().findById(1L);
             then(repo).should().save(sample);
         }
@@ -179,17 +162,14 @@ class ProductServiceImplTest {
         @DisplayName("debe lanzar NotFoundException si el id no existe")
         void update_notFound() {
             given(repo.findById(99L)).willReturn(Optional.empty());
-
             Product incoming = new Product();
             incoming.setNameProduct("X");
             incoming.setPriceProduct(BigDecimal.ONE);
             incoming.setStockProduct(1);
             incoming.setDescriptionProduct("Y");
-
             assertThatThrownBy(() -> service.update(99L, incoming))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessageContaining("Producto 99 no encontrado");
-
             then(repo).should().findById(99L);
             then(repo).should(never()).save(any());
         }
@@ -203,9 +183,7 @@ class ProductServiceImplTest {
         void delete_ok() {
             given(repo.existsById(1L)).willReturn(true);
             willDoNothing().given(repo).deleteById(1L);
-
             service.delete(1L);
-
             then(repo).should().existsById(1L);
             then(repo).should().deleteById(1L);
         }
@@ -214,11 +192,9 @@ class ProductServiceImplTest {
         @DisplayName("debe lanzar NotFoundException cuando no existe")
         void delete_notFound() {
             given(repo.existsById(123L)).willReturn(false);
-
             assertThatThrownBy(() -> service.delete(123L))
                     .isInstanceOf(NotFoundException.class)
                     .hasMessageContaining("Producto 123 no encontrado");
-
             then(repo).should().existsById(123L);
             then(repo).should(never()).deleteById(anyLong());
         }
