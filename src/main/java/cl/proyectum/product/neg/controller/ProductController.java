@@ -3,6 +3,7 @@ package cl.proyectum.product.neg.controller;
 
 import cl.proyectum.product.neg.entities.Product;
 import cl.proyectum.product.neg.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@Tag(name = "Gestión de Productos", description = "Permite generar las operaciones basicas para productos")
 public class ProductController {
 
     private final ProductService service;
@@ -22,6 +24,7 @@ public class ProductController {
     public ProductController(ProductService service) {
         this.service = service;
     }
+
 
     @PostMapping
     public ResponseEntity<Product> create(@Valid @RequestBody Product p) {
@@ -39,7 +42,7 @@ public class ProductController {
     @GetMapping
     public Page<Product> list(
             @RequestParam(required = false) String q,
-            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 20) Pageable pageable) {
         return service.list(q, pageable);
     }
 

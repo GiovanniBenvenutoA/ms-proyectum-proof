@@ -22,7 +22,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(Product p) {
-        // asegurar id null para alta
         p.setId(null);
         return repo.save(p);
     }
@@ -46,11 +45,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product update(Long id, Product p) {
         Product current = get(id);
-        // Copia controlada de campos editables
-        current.setName(p.getName());
-        current.setPrice(p.getPrice());
-        current.setStock(p.getStock());
-        // si tu entidad tiene más campos editables, setéalos acá
+        current.setNameProduct(p.getNameProduct());
+        current.setPriceProduct(p.getPriceProduct());
+        current.setStockProduct(p.getStockProduct());
+        current.setDescriptionProduct(p.getDescriptionProduct());
         return repo.save(current);
     }
 
