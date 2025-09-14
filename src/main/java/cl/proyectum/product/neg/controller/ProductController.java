@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/products")
 @Tag(name = "Gestión de Productos", description = "Permite generar las operaciones basicas para productos")
 public class ProductController {
@@ -30,7 +31,7 @@ public class ProductController {
     public ResponseEntity<Product> create(@Valid @RequestBody Product p) {
         Product created = service.create(p);
         return ResponseEntity
-                .created(URI.create("/api/products/" + created.getId()))
+                .created(URI.create("/api/v1/products/" + created.getId()))
                 .body(created);
     }
 
