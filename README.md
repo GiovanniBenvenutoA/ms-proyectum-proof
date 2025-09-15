@@ -31,6 +31,21 @@ Usuario: sa
 
 Password: (vacío)
 ```
+
+## ⚙️ Acceder a la aplicación
+```
+Para acceder a los recursos de la api primero debes consumir este servicio 
+
+http://localhost:8080/api-product-proyectum/auth/login
+
+el usuario y password deben ir en un formato json como ejemplo
+
+{ "username": "admin", "password": "admin123" }
+
+esto generara un token de acceso que durara 1 hora.
+
+```
+```
 ## ⚙️ Endpoints principales
 
 ``` Endpoints principales
@@ -38,6 +53,7 @@ Password: (vacío)
 Todos los endpoints están agrupados bajo el recurso Gestión de Productos en Swagger.
 
 Método	Endpoint
+GET /auth/login Obtencion de token 
 GET	/products	Listar todos los productos (paginado y filtrado opcional)	/products?page=0&size=10
 GET	/products/{id}	Obtener un producto por su ID	
 POST	/products	Crear un nuevo producto	json { "nameProduct": "Laptop", "priceProduct": 750000, "stockProduct": 15, "descriptionProduct": "Laptop de alto rendimiento" }
